@@ -1,0 +1,68 @@
+_format_version: "3.0"
+
+consumers:
+  - username: tysoej
+    # CONSUMER MARKER
+    plugins:
+      - name: rate-limiting-advanced
+        config:
+          limit:
+            - 200
+          window_size:
+            - 60
+          strategy: local
+
+services:
+  - name: httpbin
+    url: https://httpbin.org/anything
+
+    # SERVICE MARKER
+    plugins:
+      - name: rate-limiting-advanced
+        config:
+          limit:
+            - 5
+          window_size:
+            - 60
+          strategy: local
+
+    routes:
+      - name: httpbin-GET
+        methods:
+          - GET
+        paths:
+          - "~/httpbin$"
+        # ROUTE MARKER
+        plugins:
+          - name: rate-limiting-advanced
+            config:
+              limit:
+                - 30
+              window_size:
+                - 60
+              strategy: local
+
+      - name: httpbin-POST
+        methods:
+          - POST
+        paths:
+          - "~/httpbin$"
+        # ROUTE MARKER
+        plugins:
+          - name: rate-limiting-advanced
+            config:
+              limit:
+                - 10
+              window_size:
+                - 60
+              strategy: local
+
+# GLOBAL MARKER
+plugins:
+  - name: rate-limiting-advanced
+    config:
+      limit:
+        - 1
+      window_size:
+        - 60
+      strategy: local
